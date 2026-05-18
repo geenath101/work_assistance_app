@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Legacy refs kept for any remaining usages -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- ── Material 3 Light palette (Blue 600 primary) ── -->
+    <color name="md_primary">#1B6EF3</color>
+    <color name="md_on_primary">#FFFFFF</color>
+    <color name="md_primary_container">#D8E2FF</color>
+    <color name="md_on_primary_container">#001551</color>
+
+    <color name="md_secondary">#005F73</color>
+    <color name="md_on_secondary">#FFFFFF</color>
+    <color name="md_secondary_container">#B2EBF2</color>
+    <color name="md_on_secondary_container">#001F26</color>
+
+    <color name="md_surface">#F8F9FF</color>
+    <color name="md_on_surface">#191C20</color>
+    <color name="md_surface_variant">#E1E2EC</color>
+    <color name="md_on_surface_variant">#44474F</color>
+
+    <color name="md_error">#BA1A1A</color>
+    <color name="md_on_error">#FFFFFF</color>
+
+    <!-- ── Material 3 Dark palette ── -->
+    <color name="md_primary_dark">#ADC6FF</color>
+    <color name="md_on_primary_dark">#002E6D</color>
+    <color name="md_primary_container_dark">#00429A</color>
+    <color name="md_on_primary_container_dark">#D8E2FF</color>
+
+    <color name="md_secondary_dark">#80D4E4</color>
+    <color name="md_on_secondary_dark">#003640</color>
+    <color name="md_secondary_container_dark">#004E5C</color>
+    <color name="md_on_secondary_container_dark">#B2EBF2</color>
+
+    <color name="md_surface_dark">#111318</color>
+    <color name="md_on_surface_dark">#E2E2E9</color>
+    <color name="md_surface_variant_dark">#44474F</color>
+    <color name="md_on_surface_variant_dark">#C4C6D0</color>
+
+    <color name="md_error_dark">#FFB4AB</color>
+    <color name="md_on_error_dark">#690005</color>
+
+    <!-- ── Semantic colors used in code ── -->
+    <color name="color_signed_in">#2E7D32</color>
+    <color name="color_signed_out_bg">#F5F5F5</color>
+    <color name="geofence_stroke">#1565C0</color>
+    <color name="geofence_fill">#221565C0</color>
+</resources>
