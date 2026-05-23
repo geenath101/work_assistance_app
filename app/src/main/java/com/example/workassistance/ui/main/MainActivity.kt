@@ -24,7 +24,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.workassistance.data.remote.model.Site
+import com.example.workassistance.data.remote.model.SiteAssignment
 import com.example.workassistance.repository.AuthRepository
 import com.example.workassistance.ui.auth.LoginActivity
 import com.example.workassistance.ui.consumables.ConsumablesScreen
@@ -59,11 +59,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun openSiteDetail(site: Site) {
+    private fun openSiteDetail(site: SiteAssignment) {
         startActivity(Intent(this, SiteDetailActivity::class.java).apply {
-            putExtra(SiteDetailActivity.EXTRA_SITE_ID, site.id)
-            putExtra(SiteDetailActivity.EXTRA_SITE_NAME, site.name)
-            putExtra(SiteDetailActivity.EXTRA_SITE_ADDRESS, site.address)
+            putExtra(SiteDetailActivity.EXTRA_ASSIGNMENT_ID, site.assignmentId)
+            putExtra(SiteDetailActivity.EXTRA_SITE_ID, site.siteId)
+            putExtra(SiteDetailActivity.EXTRA_SITE_NAME, site.siteName)
+            putExtra(SiteDetailActivity.EXTRA_SITE_ADDRESS, site.siteAddress)
             putExtra(SiteDetailActivity.EXTRA_SITE_LAT, site.latitude)
             putExtra(SiteDetailActivity.EXTRA_SITE_LNG, site.longitude)
             putExtra(SiteDetailActivity.EXTRA_SITE_RADIUS, site.radiusMeters)
@@ -94,7 +95,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainShell(
-    onSiteClicked: (Site) -> Unit,
+    onSiteClicked: (SiteAssignment) -> Unit,
     onSignOut: () -> Unit
 ) {
     val navController = rememberNavController()

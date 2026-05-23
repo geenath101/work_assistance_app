@@ -7,11 +7,14 @@ All app source lives in `app/src/main/java/com/example/workassistance/`.
 **Current state (as of last update):**
 - Login screen implemented (username/password + Google Sign-In with mock logic)
 - Main shell with top bar (user name + company logo) and bottom navigation (3 tabs)
-- Home tab shows upcoming site visits loaded from API; tap navigates to sign-in screen
+- Home tab fetches sites scoped to the logged-in employee via `GET /sites/employee/{employeeId}`; tap navigates to sign-in screen
 - Request Consumables tab — placeholder UI (feature pending)
 - Profile tab — shows user details + sign out
 - Theme upgraded to Material 3 (`Theme.Material3.DayNight.NoActionBar`)
 - API field `proximity_radius_m` correctly mapped in `Site.kt`
+- `User` model carries `employeeId` (UUID); `AuthRepository` mock populates it with the sample UUID from `API_REQUESTS.md`
+- `SiteRepository` has `getSitesByEmployee(employeeId)` — called at login, results shown in Home tab
+- Geofence enforcement on Sign In: button shows descriptive snackbar ("You must be within X m…") when employee is outside the site radius; sign-in is blocked until inside
 
 ## Toolchain (non-obvious versions)
 - Gradle: **9.4.1** (via wrapper — always use `./gradlew`, not a system `gradle`)

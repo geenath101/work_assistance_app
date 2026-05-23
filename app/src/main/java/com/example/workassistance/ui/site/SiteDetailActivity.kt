@@ -12,9 +12,9 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -22,7 +22,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workassistance.data.local.AppDatabase
 import com.example.workassistance.data.remote.api.RetrofitClient
-import com.example.workassistance.data.remote.model.Site
+import com.example.workassistance.data.remote.model.SiteAssignment
 import com.example.workassistance.repository.AttendanceRepository
 import com.example.workassistance.ui.theme.WorkAssistanceTheme
 import com.example.workassistance.util.GeofenceHelper
@@ -43,24 +43,32 @@ import com.google.android.gms.maps.model.MarkerOptions
 class SiteDetailActivity : ComponentActivity() {
 
     companion object {
-        const val EXTRA_SITE_ID = "extra_site_id"
-        const val EXTRA_SITE_NAME = "extra_site_name"
-        const val EXTRA_SITE_ADDRESS = "extra_site_address"
-        const val EXTRA_SITE_LAT = "extra_site_lat"
-        const val EXTRA_SITE_LNG = "extra_site_lng"
-        const val EXTRA_SITE_RADIUS = "extra_site_radius"
+        const val EXTRA_ASSIGNMENT_ID  = "extra_assignment_id"
+        const val EXTRA_SITE_ID        = "extra_site_id"
+        const val EXTRA_SITE_NAME      = "extra_site_name"
+        const val EXTRA_SITE_ADDRESS   = "extra_site_address"
+        const val EXTRA_SITE_LAT       = "extra_site_lat"
+        const val EXTRA_SITE_LNG       = "extra_site_lng"
+        const val EXTRA_SITE_RADIUS    = "extra_site_radius"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val site = Site(
-            id = intent.getStringExtra(EXTRA_SITE_ID) ?: "",
-            name = intent.getStringExtra(EXTRA_SITE_NAME) ?: "",
-            address = intent.getStringExtra(EXTRA_SITE_ADDRESS) ?: "",
-            latitude = intent.getDoubleExtra(EXTRA_SITE_LAT, 0.0),
-            longitude = intent.getDoubleExtra(EXTRA_SITE_LNG, 0.0),
-            radiusMeters = intent.getDoubleExtra(EXTRA_SITE_RADIUS, 100.0)
+        // Reconstruct the SiteAssignment from intent extras.
+        // All geofence data (lat, lng, radius) comes from the API response
+        // that was already fetched on the home screen — no second API call needed.
+        val site = SiteAssignment(
+            assignmentId = intent.getStringExtra(EXTRA_ASSIGNMENT_ID) ?: "",
+            siteId       = intent.getStringExtra(EXTRA_SITE_ID) ?: "",
+            siteName     = intent.getStringExtra(EXTRA_SITE_NAME) ?: "",
+            siteAddress  = intent.getStringExtra(EXTRA_SITE_ADDRESS) ?: "",
+            latitude     = intent.getDoubleExtra(EXTRA_SITE_LAT, 0.0),
+            longitude    = intent.getDoubleExtra(EXTRA_SITE_LNG, 0.0),
+            radiusMeters = intent.getDoubleExtra(EXTRA_SITE_RADIUS, 100.0),
+            employeeId   = "",
+            assignedAt   = "",
+            active       = true
         )
 
         setContent {
@@ -77,7 +85,7 @@ class SiteDetailActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SiteDetailScreen(
-    site: Site,
+    site: SiteAssignment,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
@@ -85,8 +93,8 @@ fun SiteDetailScreen(
     val repo = remember { AttendanceRepository(dao, RetrofitClient.apiService) }
     val siteViewModel: SiteViewModel = viewModel(factory = SiteViewModelFactory(repo))
 
-    LaunchedEffect(site.id) {
-        siteViewModel.loadSignInState(site.id)
+    LaunchedEffect(site.siteId) {
+        siteViewModel.loadSignInState(site.siteId)
     }
 
     val isSignedIn by siteViewModel.isSignedIn.observeAsState(false)
@@ -114,7 +122,10 @@ fun SiteDetailScreen(
         }
     }
 
-    // Location updates
+    // Location updates via FusedLocationProviderClient.
+    // The geofence check compares the live GPS coordinates against the
+    // site.latitude / site.longitude / site.radiusMeters that came from
+    // the initial employee-sites API response — no second network call.
     val fusedClient = remember { LocationServices.getFusedLocationProviderClient(context) }
     val locationCallback = remember {
         object : LocationCallback() {
@@ -127,7 +138,7 @@ fun SiteDetailScreen(
                 locationStatus = if (inside) "You are inside the site area" else "You are outside the site area"
                 distanceText = "Distance: ${distance.toInt()} m (allowed: ${site.radiusMeters.toInt()} m)"
 
-                // Update map marker
+                // Update map marker colour (green = inside, red = outside)
                 val gMap = mapViewRef.value ?: return
                 val position = LatLng(loc.latitude, loc.longitude)
                 val hue = if (inside) BitmapDescriptorFactory.HUE_GREEN else BitmapDescriptorFactory.HUE_RED
@@ -177,12 +188,13 @@ fun SiteDetailScreen(
     }
 
     val isActionLoading = eventResult is Resource.Loading
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text(site.name) },
+                title = { Text(site.siteName) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -212,11 +224,11 @@ fun SiteDetailScreen(
                                 gMap.uiSettings.isZoomControlsEnabled = true
                                 val siteLatLng = LatLng(site.latitude, site.longitude)
 
-                                // Site pin
+                                // Site pin (blue)
                                 gMap.addMarker(
                                     MarkerOptions()
                                         .position(siteLatLng)
-                                        .title(site.name)
+                                        .title(site.siteName)
                                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
                                 )
 
@@ -261,9 +273,9 @@ fun SiteDetailScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text(text = site.name, style = MaterialTheme.typography.titleLarge)
+                    Text(text = site.siteName, style = MaterialTheme.typography.titleLarge)
                     Text(
-                        text = site.address,
+                        text = site.siteAddress,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -312,16 +324,26 @@ fun SiteDetailScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        // Sign In button
+                        // Sign In button — geofence enforced using embedded coordinates
                         Button(
                             onClick = {
                                 val lat = userLat ?: return@Button
                                 val lng = userLng ?: return@Button
+
+                                // Check current GPS position against site.latitude/longitude/radiusMeters
+                                // that arrived in the initial sites API response — no extra API call.
                                 if (!GeofenceHelper.isInsideGeofence(lat, lng, site)) {
                                     val dist = GeofenceHelper.distanceTo(lat, lng, site)
-                                    // Show via snackbar — handled in LaunchedEffect via a side channel
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            "You must be within ${site.radiusMeters.toInt()} m of " +
+                                            "${site.siteName} to sign in. " +
+                                            "Current distance: ${dist.toInt()} m."
+                                        )
+                                    }
                                     return@Button
                                 }
+
                                 siteViewModel.signIn(site, lat, lng)
                             },
                             modifier = Modifier.weight(1f),
@@ -330,7 +352,7 @@ fun SiteDetailScreen(
                             Text("Sign In")
                         }
 
-                        // Sign Out button
+                        // Sign Out button — no geofence restriction
                         OutlinedButton(
                             onClick = {
                                 val lat = userLat ?: return@OutlinedButton

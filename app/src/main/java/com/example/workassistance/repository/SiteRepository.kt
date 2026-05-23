@@ -1,14 +1,21 @@
 package com.example.workassistance.repository
 
 import com.example.workassistance.data.remote.api.ApiService
-import com.example.workassistance.data.remote.model.Site
+import com.example.workassistance.data.remote.model.SiteAssignment
 import com.example.workassistance.util.Resource
 
 class SiteRepository(private val apiService: ApiService) {
 
-    suspend fun getSites(): Resource<List<Site>> {
+    /**
+     * Fetch all site assignments for the given employee.
+     * Calls GET /sites/employee/{employeeId}.
+     *
+     * The response already contains latitude, longitude, and radius for each
+     * site, so geofence checks can be performed locally without a second call.
+     */
+    suspend fun getSitesByEmployee(employeeId: String): Resource<List<SiteAssignment>> {
         return try {
-            val response = apiService.getSites()
+            val response = apiService.getSitesByEmployee(employeeId)
             if (response.isSuccessful && response.body() != null) {
                 Resource.Success(response.body()!!)
             } else {

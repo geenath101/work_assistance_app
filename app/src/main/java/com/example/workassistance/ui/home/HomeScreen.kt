@@ -15,7 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workassistance.data.remote.api.RetrofitClient
-import com.example.workassistance.data.remote.model.Site
+import com.example.workassistance.data.remote.model.SiteAssignment
+import com.example.workassistance.repository.AuthRepository
 import com.example.workassistance.repository.SiteRepository
 import com.example.workassistance.ui.main.MainViewModel
 import com.example.workassistance.ui.main.MainViewModelFactory
@@ -23,11 +24,17 @@ import com.example.workassistance.util.Resource
 
 @Composable
 fun HomeScreen(
-    onSiteClicked: (Site) -> Unit,
-    viewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory(SiteRepository(RetrofitClient.apiService))
-    )
+    onSiteClicked: (SiteAssignment) -> Unit
 ) {
+    val employeeId = remember {
+        AuthRepository.getCurrentUser()?.employeeId ?: ""
+    }
+
+    val viewModel: MainViewModel = viewModel(
+        key = employeeId,
+        factory = MainViewModelFactory(SiteRepository(RetrofitClient.apiService), employeeId)
+    )
+
     val sitesResource by viewModel.sites.observeAsState(Resource.Loading)
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -61,7 +68,8 @@ fun HomeScreen(
             }
 
             is Resource.Success<*> -> {
-                val sites = (resource as Resource.Success<List<Site>>).data
+                @Suppress("UNCHECKED_CAST")
+                val sites = (resource as Resource.Success<List<SiteAssignment>>).data
                 if (sites.isEmpty()) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text("No upcoming site visits", style = MaterialTheme.typography.bodyLarge)
@@ -82,7 +90,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun SiteCard(site: Site, onClick: () -> Unit) {
+fun SiteCard(site: SiteAssignment, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -102,11 +110,11 @@ fun SiteCard(site: Site, onClick: () -> Unit) {
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = site.name,
+                    text = site.siteName,
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = site.address,
+                    text = site.siteAddress,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -115,6 +123,16 @@ fun SiteCard(site: Site, onClick: () -> Unit) {
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                if (site.shiftSlots.isNotEmpty()) {
+                    val days = site.shiftSlots.joinToString(", ") { slot ->
+                        "${slot.day} ${slot.shiftStart}–${slot.shiftEnd}"
+                    }
+                    Text(
+                        text = days,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }

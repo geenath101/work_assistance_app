@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.workassistance.data.remote.model.Site
+import com.example.workassistance.data.remote.model.SiteAssignment
 import com.example.workassistance.repository.AttendanceRepository
 import com.example.workassistance.util.Resource
 import kotlinx.coroutines.launch
@@ -25,20 +25,20 @@ class SiteViewModel(private val attendanceRepository: AttendanceRepository) : Vi
         }
     }
 
-    fun signIn(site: Site, latitude: Double, longitude: Double) {
+    fun signIn(site: SiteAssignment, latitude: Double, longitude: Double) {
         recordEvent(site, "SIGN_IN", latitude, longitude)
     }
 
-    fun signOut(site: Site, latitude: Double, longitude: Double) {
+    fun signOut(site: SiteAssignment, latitude: Double, longitude: Double) {
         recordEvent(site, "SIGN_OUT", latitude, longitude)
     }
 
-    private fun recordEvent(site: Site, eventType: String, latitude: Double, longitude: Double) {
+    private fun recordEvent(site: SiteAssignment, eventType: String, latitude: Double, longitude: Double) {
         viewModelScope.launch {
             _eventResult.value = Resource.Loading
             val result = attendanceRepository.recordEvent(
-                siteId = site.id,
-                siteName = site.name,
+                siteId = site.siteId,
+                siteName = site.siteName,
                 eventType = eventType,
                 latitude = latitude,
                 longitude = longitude

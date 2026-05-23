@@ -13,7 +13,7 @@ object RetrofitClient {
      * Must end with a trailing slash.
      * Example: "https://api.yourportal.com/v1/"
      */
-    private const val BASE_URL = "https://pe9ptxd1o0.execute-api.ap-southeast-2.amazonaws.com/default/workassistance-site-dev/"
+    private const val BASE_URL = "https://l877q2ymn5.execute-api.ap-southeast-2.amazonaws.com/dev/"
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY

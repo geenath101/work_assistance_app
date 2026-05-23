@@ -34,6 +34,8 @@ object AuthRepository {
         return if (username.isNotBlank() && password.isNotBlank()) {
             val user = User(
                 id = "mock-user-001",
+                // TODO: replace with the real employee UUID returned by the backend auth API
+                employeeId = "c3d4e5f6-a7b8-9012-cdef-123456789012",
                 displayName = username.trim(),
                 email = "$username@example.com",
                 companyName = "WorkAssist Co."
@@ -54,6 +56,8 @@ object AuthRepository {
         delay(800)
         val user = User(
             id = "google-user-001",
+            // TODO: replace with the real employee UUID returned by the backend after Google auth
+            employeeId = "457124e9",
             displayName = googleDisplayName,
             email = googleAccountName,
             companyName = "WorkAssist Co."
