@@ -22,4 +22,7 @@ interface AttendanceDao {
     /** Returns the last event for a given site so we know if worker is currently signed in. */
     @Query("SELECT * FROM attendance_records WHERE siteId = :siteId ORDER BY timestamp DESC LIMIT 1")
     suspend fun getLastEventForSite(siteId: String): AttendanceRecord?
+
+    @Query("SELECT * FROM attendance_records WHERE siteId = :siteId AND eventType = 'SIGN_IN' ORDER BY timestamp DESC LIMIT 1")
+    suspend fun getLastSignInForSite(siteId: String): AttendanceRecord?
 }

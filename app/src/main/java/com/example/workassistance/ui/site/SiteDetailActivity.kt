@@ -50,6 +50,7 @@ class SiteDetailActivity : ComponentActivity() {
         const val EXTRA_SITE_LAT       = "extra_site_lat"
         const val EXTRA_SITE_LNG       = "extra_site_lng"
         const val EXTRA_SITE_RADIUS    = "extra_site_radius"
+        const val EXTRA_SIGN_IN_EXPIRY_MINUTES = "extra_sign_in_expiry_minutes"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,7 +69,8 @@ class SiteDetailActivity : ComponentActivity() {
             radiusMeters = intent.getDoubleExtra(EXTRA_SITE_RADIUS, 100.0),
             employeeId   = "",
             assignedAt   = "",
-            active       = true
+            active       = true,
+            signInExpiryMinutes = intent.getIntExtra(EXTRA_SIGN_IN_EXPIRY_MINUTES, 12 * 60)
         )
 
         setContent {
@@ -93,8 +95,8 @@ fun SiteDetailScreen(
     val repo = remember { AttendanceRepository(dao, RetrofitClient.apiService) }
     val siteViewModel: SiteViewModel = viewModel(factory = SiteViewModelFactory(repo))
 
-    LaunchedEffect(site.siteId) {
-        siteViewModel.loadSignInState(site.siteId)
+    LaunchedEffect(site.siteId, site.signInExpiryMinutes) {
+        siteViewModel.loadSignInState(site.siteId, site.signInExpiryMinutes)
     }
 
     val isSignedIn by siteViewModel.isSignedIn.observeAsState(false)

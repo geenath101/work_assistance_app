@@ -44,6 +44,18 @@
             android:exported="false" />
 
         <activity
+            android:name=".ui.site.SiteManagementActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.site.ProofOfWorkActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.site.SiteRequestsActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".ui.site.SiteDetailActivity"
             android:exported="false" />
 

@@ -20,6 +20,37 @@ class AttendanceRepository(
     suspend fun getLastEventType(siteId: String): String? =
         attendanceDao.getLastEventForSite(siteId)?.eventType
 
+    suspend fun getLastSignInTimestamp(siteId: String): Long? =
+        attendanceDao.getLastSignInForSite(siteId)?.timestamp
+
+    suspend fun getLastSignInRecord(siteId: String): AttendanceRecord? =
+        attendanceDao.getLastSignInForSite(siteId)
+
+    /**
+     * Inserts an attendance record locally without attempting remote sync.
+     * Useful for lazy state corrections (e.g., expiry) without extra network work.
+     */
+    suspend fun insertLocalEvent(
+        siteId: String,
+        siteName: String,
+        eventType: String,
+        latitude: Double,
+        longitude: Double,
+        timestamp: Long = System.currentTimeMillis()
+    ): Long {
+        return attendanceDao.insert(
+            AttendanceRecord(
+                siteId = siteId,
+                siteName = siteName,
+                eventType = eventType,
+                latitude = latitude,
+                longitude = longitude,
+                timestamp = timestamp,
+                synced = false
+            )
+        )
+    }
+
     /**
      * Records the event locally first, then attempts to sync to the server.
      * If the server call fails the record stays with synced=false for later retry.

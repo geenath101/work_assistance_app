@@ -27,5 +27,10 @@ data class SiteAssignment(
     @SerializedName("employee_id")  val employeeId: String,
     @SerializedName("assigned_at")  val assignedAt: String,
     @SerializedName("active")       val active: Boolean,
-    @SerializedName("shift_slots")  val shiftSlots: List<ShiftSlot> = emptyList()
+    @SerializedName("shift_slots")  val shiftSlots: List<ShiftSlot> = emptyList(),
+    /**
+     * How long a SIGN_IN remains valid before expiring automatically.
+     * Placeholder field name; wire it to the real API field when available.
+     */
+    @SerializedName("sign_in_expiry_minutes") val signInExpiryMinutes: Int = 12 * 60
 )

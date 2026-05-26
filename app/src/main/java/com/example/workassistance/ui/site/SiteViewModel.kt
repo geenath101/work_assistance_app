@@ -18,10 +18,35 @@ class SiteViewModel(private val attendanceRepository: AttendanceRepository) : Vi
     private val _eventResult = MutableLiveData<Resource<Unit>>()
     val eventResult: LiveData<Resource<Unit>> = _eventResult
 
-    fun loadSignInState(siteId: String) {
+    fun loadSignInState(siteId: String, signInExpiryMinutes: Int) {
         viewModelScope.launch {
             val last = attendanceRepository.getLastEventType(siteId)
-            _signInState.value = last == "SIGN_IN"
+            if (last != "SIGN_IN") {
+                _signInState.value = false
+                return@launch
+            }
+
+            val signInRecord = attendanceRepository.getLastSignInRecord(siteId)
+            val signInTs = signInRecord?.timestamp
+            val expiryMs = signInExpiryMinutes.coerceAtLeast(1).toLong() * 60_000L
+            val expired = signInTs == null || (System.currentTimeMillis() - signInTs) >= expiryMs
+
+            if (expired) {
+                // Lazy expiry: record a local SIGN_OUT so state is consistent across restarts.
+                // No remote call here (avoids background/network work).
+                if (signInRecord != null) {
+                    attendanceRepository.insertLocalEvent(
+                        siteId = signInRecord.siteId,
+                        siteName = signInRecord.siteName,
+                        eventType = "SIGN_OUT",
+                        latitude = signInRecord.latitude,
+                        longitude = signInRecord.longitude
+                    )
+                }
+                _signInState.value = false
+            } else {
+                _signInState.value = true
+            }
         }
     }
 

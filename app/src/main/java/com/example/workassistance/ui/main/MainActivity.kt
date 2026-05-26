@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AssistantPhoto
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -31,11 +32,12 @@ import com.example.workassistance.ui.consumables.ConsumablesScreen
 import com.example.workassistance.ui.home.HomeScreen
 import com.example.workassistance.ui.profile.ProfileScreen
 import com.example.workassistance.ui.site.SiteDetailActivity
+import com.example.workassistance.ui.site.SiteManagementActivity
 import com.example.workassistance.ui.theme.WorkAssistanceTheme
 
 sealed class BottomNavRoute(val route: String, val label: String, val icon: ImageVector) {
     object Home : BottomNavRoute("home", "Home", Icons.Default.Home)
-    object Consumables : BottomNavRoute("consumables", "Consumables", Icons.Default.ShoppingCart)
+    object Consumables : BottomNavRoute("Requests", "Request", Icons.Default.AssistantPhoto)
     object Profile : BottomNavRoute("profile", "Profile", Icons.Default.Person)
 }
 
@@ -60,7 +62,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun openSiteDetail(site: SiteAssignment) {
-        startActivity(Intent(this, SiteDetailActivity::class.java).apply {
+        // Open the site management panel first (instead of going straight to the map).
+        startActivity(Intent(this, SiteManagementActivity::class.java).apply {
             putExtra(SiteDetailActivity.EXTRA_ASSIGNMENT_ID, site.assignmentId)
             putExtra(SiteDetailActivity.EXTRA_SITE_ID, site.siteId)
             putExtra(SiteDetailActivity.EXTRA_SITE_NAME, site.siteName)
@@ -68,6 +71,7 @@ class MainActivity : ComponentActivity() {
             putExtra(SiteDetailActivity.EXTRA_SITE_LAT, site.latitude)
             putExtra(SiteDetailActivity.EXTRA_SITE_LNG, site.longitude)
             putExtra(SiteDetailActivity.EXTRA_SITE_RADIUS, site.radiusMeters)
+            putExtra(SiteDetailActivity.EXTRA_SIGN_IN_EXPIRY_MINUTES, site.signInExpiryMinutes)
         })
     }
 
