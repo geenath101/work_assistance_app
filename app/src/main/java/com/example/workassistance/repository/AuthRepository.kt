@@ -1,8 +1,9 @@
 package com.example.workassistance.repository
 
 import com.example.workassistance.data.model.User
+import com.example.workassistance.data.remote.api.RetrofitClient
+import com.example.workassistance.data.remote.model.LoginRequest
 import com.example.workassistance.util.Resource
-import kotlinx.coroutines.delay
 
 /**
  * Mock authentication repository.
@@ -15,6 +16,7 @@ import kotlinx.coroutines.delay
 object AuthRepository {
 
     private var currentUser: User? = null
+    private var accessToken: String? = null
 
     fun getCurrentUser(): User? = currentUser
 
@@ -22,28 +24,51 @@ object AuthRepository {
 
     fun signOut() {
         currentUser = null
+        accessToken = null
     }
 
     /**
      * Mock username/password sign-in.
      * Accepts any non-empty credentials and always succeeds after a short delay.
-     * TODO: replace with real API call.
+     * Calls POST /auth/login.
      */
     suspend fun signInWithPassword(username: String, password: String): Resource<User> {
-        delay(1000) // simulate network latency
-        return if (username.isNotBlank() && password.isNotBlank()) {
+        if (username.isBlank() || password.isBlank()) {
+            return Resource.Error("Username and password cannot be empty.")
+        }
+
+        return try {
+            // Company is currently required by the API payload. Keep it constant for now.
+            val request = LoginRequest(
+                userName = username.trim(),
+                password = password,
+                company = "WorkAssist Co."
+            )
+            val response = RetrofitClient.apiService.login(request)
+            if (!response.isSuccessful || response.body() == null) {
+                return Resource.Error("Login failed: ${response.code()} ${response.message()}")
+            }
+
+            val body = response.body()!!
+            accessToken = body.accessToken
+
+            val remoteUser = body.user
+                ?: return Resource.Error("Login failed: missing user payload")
+
             val user = User(
-                id = "mock-user-001",
-                // TODO: replace with the real employee UUID returned by the backend auth API
-                employeeId = "c3d4e5f6-a7b8-9012-cdef-123456789012",
-                displayName = username.trim(),
-                email = "$username@example.com",
+                id = remoteUser.id,
+                // App uses employeeId for site assignments.
+                // Backend login user.id currently matches the employee identifier.
+                employeeId = remoteUser.id,
+                displayName = remoteUser.username,
+                email = "${remoteUser.username}@example.com",
                 companyName = "WorkAssist Co."
             )
+
             currentUser = user
             Resource.Success(user)
-        } else {
-            Resource.Error("Username and password cannot be empty.")
+        } catch (e: Exception) {
+            Resource.Error("Network error: ${e.localizedMessage ?: "Unknown error"}")
         }
     }
 
@@ -53,7 +78,6 @@ object AuthRepository {
      * TODO: replace with real Google credential handling.
      */
     suspend fun signInWithGoogle(googleAccountName: String, googleDisplayName: String): Resource<User> {
-        delay(800)
         val user = User(
             id = "google-user-001",
             // TODO: replace with the real employee UUID returned by the backend after Google auth
@@ -65,4 +89,6 @@ object AuthRepository {
         currentUser = user
         return Resource.Success(user)
     }
+
+    fun getAccessToken(): String? = accessToken
 }

@@ -44,9 +44,7 @@ class ProofOfWorkViewModel(
     }
 }
 
-class ProofOfWorkViewModelFactory(
-    private val repo: ProofOfWorkRepository
-) : ViewModelProvider.Factory {
+class ProofOfWorkViewModelFactory(private val repo: ProofOfWorkRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ProofOfWorkViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")

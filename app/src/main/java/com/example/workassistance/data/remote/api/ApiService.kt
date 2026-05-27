@@ -2,6 +2,8 @@ package com.example.workassistance.data.remote.api
 
 import com.example.workassistance.data.remote.model.AttendanceRequest
 import com.example.workassistance.data.remote.model.AttendanceResponse
+import com.example.workassistance.data.remote.model.LoginRequest
+import com.example.workassistance.data.remote.model.LoginResponse
 import com.example.workassistance.data.remote.model.SiteAssignment
 import retrofit2.Response
 import retrofit2.http.Body
@@ -26,4 +28,7 @@ interface ApiService {
      */
     @POST("attendance")
     suspend fun postAttendance(@Body request: AttendanceRequest): Response<AttendanceResponse>
+
+    @POST("auth/login")
+    suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
 }

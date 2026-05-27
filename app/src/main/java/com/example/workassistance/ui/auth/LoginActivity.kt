@@ -59,7 +59,6 @@ class LoginActivity : ComponentActivity() {
                     errorMessage = errorMessage.value,
                     onErrorDismissed = { errorMessage.value = null },
                     onSignIn = { username, password -> attemptPasswordSignIn(username, password) },
-                    onGoogleSignIn = { launchGoogleSignIn() }
                 )
             }
         }
@@ -141,7 +140,6 @@ fun LoginScreen(
     errorMessage: String?,
     onErrorDismissed: () -> Unit,
     onSignIn: (username: String, password: String) -> Unit,
-    onGoogleSignIn: () -> Unit
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -267,33 +265,6 @@ fun LoginScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Divider with "OR"
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                HorizontalDivider(modifier = Modifier.weight(1f))
-                Text(
-                    text = "  OR  ",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                HorizontalDivider(modifier = Modifier.weight(1f))
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Google Sign-In button
-            OutlinedButton(
-                onClick = onGoogleSignIn,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                enabled = !isLoading
-            ) {
-                Text("Sign in with Google")
-            }
         }
     }
 }
