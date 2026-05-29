@@ -1,6 +1,5 @@
 package com.example.workassistance.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
@@ -10,7 +9,9 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 fun WorkAssistanceTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    // Default to a light palette (blue/white). Dark surfaces are intentionally not used by default
+    // because the previous near-black palette was too harsh for this app's usage.
+    darkTheme: Boolean = false,
     content: @Composable () -> Unit
 ) {
     // Fixed, high-contrast palette (no dynamic colors) to keep the UI stable.
@@ -40,10 +41,11 @@ fun WorkAssistanceTheme(
         onSecondary = Color(0xFF003640),
         secondaryContainer = Color(0xFF004E5C),
         onSecondaryContainer = Color(0xFFB2EBF2),
-        surface = Color(0xFF111318),
-        onSurface = Color(0xFFE2E2E9),
-        surfaceVariant = Color(0xFF44474F),
-        onSurfaceVariant = Color(0xFFC4C6D0),
+        // Use deep navy tones instead of near-black.
+        surface = Color(0xFF0E1A2B),
+        onSurface = Color(0xFFEAF0FF),
+        surfaceVariant = Color(0xFF24324A),
+        onSurfaceVariant = Color(0xFFD3DDF8),
         error = Color(0xFFFFB4AB),
         onError = Color(0xFF690005)
     )

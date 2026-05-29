@@ -44,11 +44,34 @@ fun HomeScreen(
     )
 
     val sitesResource by viewModel.sites.observeAsState(Resource.Loading)
+    val isRefreshing = sitesResource is Resource.Loading
 
     Column(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.weight(1f))
+            TextButton(
+                onClick = { viewModel.loadSites() },
+                enabled = !isRefreshing
+            ) {
+                Icon(Icons.Default.Refresh, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Refresh sites")
+            }
+        }
+
         when (val resource = sitesResource) {
             is Resource.Loading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
                     CircularProgressIndicator()
                 }
             }
@@ -56,7 +79,8 @@ fun HomeScreen(
             is Resource.Error -> {
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
+                        .weight(1f)
                         .padding(32.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -67,7 +91,7 @@ fun HomeScreen(
                         color = MaterialTheme.colorScheme.error
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = { viewModel.loadSites() }) {
+                    Button(onClick = { viewModel.loadSites() }, enabled = !isRefreshing) {
                         Icon(Icons.Default.Refresh, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text("Retry")
@@ -79,7 +103,12 @@ fun HomeScreen(
                 @Suppress("UNCHECKED_CAST")
                 val sites = (resource as Resource.Success<List<SiteAssignment>>).data
                 if (sites.isEmpty()) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Text("No upcoming site visits", style = MaterialTheme.typography.bodyLarge)
                     }
                 } else {
@@ -100,7 +129,7 @@ fun HomeScreen(
                             .map { it.first }
 
                         val laterSites = withNext
-                            .filterNot { (site, _) -> soon.any { it.siteId == site.siteId } }
+                            .filterNot { (site, _) -> soon.any { it.assignmentId == site.assignmentId } }
                             .sortedBy { (_, next) -> next?.toInstant()?.toEpochMilli() ?: Long.MAX_VALUE }
                             .map { it.first }
 
@@ -108,6 +137,9 @@ fun HomeScreen(
                     }
 
                     LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
@@ -125,7 +157,7 @@ fun HomeScreen(
                         }
 
                         if (startingSoon.isNotEmpty()) {
-                            items(startingSoon, key = { it.siteId }) { site ->
+                            items(startingSoon, key = { it.assignmentId }) { site ->
                                 SiteCard(site = site, onClick = { onSiteClicked(site) })
                             }
                         }
@@ -145,7 +177,7 @@ fun HomeScreen(
                         }
 
                         if (later.isNotEmpty()) {
-                            items(later, key = { it.siteId }) { site ->
+                            items(later, key = { it.assignmentId }) { site ->
                                 SiteCard(site = site, onClick = { onSiteClicked(site) })
                             }
                         }
