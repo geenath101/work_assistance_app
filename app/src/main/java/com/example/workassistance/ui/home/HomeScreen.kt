@@ -2,6 +2,7 @@ package com.example.workassistance.ui.home
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -53,7 +54,7 @@ fun HomeScreen(
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Spacer(modifier = Modifier.weight(1f))
+            //Spacer(modifier = Modifier.weight(1f))
             TextButton(
                 onClick = { viewModel.loadSites() },
                 enabled = !isRefreshing
@@ -141,11 +142,11 @@ fun HomeScreen(
                             .fillMaxWidth()
                             .weight(1f),
                         contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         item {
                             Text(
-                                text = "Starting Soon (next 8 hours)",
+                                text = "Starting Soon",
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(

@@ -49,6 +49,10 @@
             android:exported="false" />
 
         <activity
+            android:name=".ui.site.SiteTasksActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".ui.site.ProofOfWorkActivity"
             android:exported="false" />
 

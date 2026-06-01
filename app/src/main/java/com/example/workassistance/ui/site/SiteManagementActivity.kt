@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Assignment
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
@@ -48,6 +49,11 @@ class SiteManagementActivity : ComponentActivity() {
                             putSiteExtras(site)
                         })
                     },
+                    onOpenTasks = {
+                        startActivity(Intent(this, SiteTasksActivity::class.java).apply {
+                            putSiteExtras(site)
+                        })
+                    },
                     onOpenProofOfWork = {
                         startActivity(Intent(this, ProofOfWorkActivity::class.java).apply {
                             putSiteExtras(site)
@@ -81,6 +87,7 @@ private fun SiteManagementScreen(
     site: SiteAssignment,
     onBack: () -> Unit,
     onOpenAttendance: () -> Unit,
+    onOpenTasks: () -> Unit,
     onOpenProofOfWork: () -> Unit,
     onOpenRequests: () -> Unit
 ) {
@@ -117,6 +124,12 @@ private fun SiteManagementScreen(
                 subtitle = "Map + geofence enforced attendance",
                 icon = Icons.Default.LocationOn,
                 onClick = onOpenAttendance
+            )
+            SiteManagementCard(
+                title = "Assigned Tasks",
+                subtitle = "View tasks for this site",
+                icon = Icons.AutoMirrored.Filled.List,
+                onClick = onOpenTasks
             )
             SiteManagementCard(
                 title = "Proof of Work",
