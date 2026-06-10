@@ -4,47 +4,82 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- ── Material 3 Light palette (Blue 600 primary) ── -->
-    <color name="md_primary">#1B6EF3</color>
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- AWS Brand Colors (matching website theme)                      -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <color name="aws_ink">#16191F</color>                 <!-- aws-ink -->
+    <color name="aws_muted">#5F6B7A</color>               <!-- aws-muted -->
+    <color name="aws_navy">#161E2D</color>                <!-- aws-navy -->
+    <color name="aws_navy_strong">#0F141D</color>         <!-- aws-navy-strong -->
+    <color name="aws_orange">#FF9900</color>              <!-- aws-orange -->
+    <color name="aws_orange_strong">#EC7211</color>       <!-- aws-orange-strong -->
+    <color name="aws_blue">#0972D3</color>                <!-- aws-blue -->
+    <color name="aws_surface">#F2F3F3</color>             <!-- aws-surface -->
+    <color name="aws_surface_alt">#FFFFFF</color>         <!-- aws-surface-alt -->
+    <color name="aws_border">#D5DBDB</color>              <!-- aws-border -->
+    <color name="aws_nav_text">#16191F</color>            <!-- aws-nav-text -->
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- Material 3 Light Palette (AWS Orange primary)                  -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <color name="md_primary">#FF9900</color>              <!-- AWS Orange -->
     <color name="md_on_primary">#FFFFFF</color>
-    <color name="md_primary_container">#D8E2FF</color>
-    <color name="md_on_primary_container">#001551</color>
+    <color name="md_primary_container">#FFE8CC</color>    <!-- Light orange tint -->
+    <color name="md_on_primary_container">#3D2400</color>
 
-    <color name="md_secondary">#005F73</color>
+    <color name="md_secondary">#0972D3</color>            <!-- AWS Blue -->
     <color name="md_on_secondary">#FFFFFF</color>
-    <color name="md_secondary_container">#B2EBF2</color>
-    <color name="md_on_secondary_container">#001F26</color>
+    <color name="md_secondary_container">#D6E8FF</color>  <!-- Light blue tint -->
+    <color name="md_on_secondary_container">#001D3D</color>
 
-    <color name="md_surface">#F8F9FF</color>
-    <color name="md_on_surface">#191C20</color>
-    <color name="md_surface_variant">#E1E2EC</color>
-    <color name="md_on_surface_variant">#44474F</color>
+    <color name="md_tertiary">#5F6B7A</color>             <!-- AWS Muted -->
+    <color name="md_on_tertiary">#FFFFFF</color>
+    <color name="md_tertiary_container">#E8EEF8</color>
+    <color name="md_on_tertiary_container">#1A1E28</color>
+
+    <color name="md_surface">#F2F3F3</color>              <!-- AWS Surface -->
+    <color name="md_on_surface">#16191F</color>           <!-- AWS Ink -->
+    <color name="md_surface_variant">#D5DBDB</color>      <!-- AWS Border -->
+    <color name="md_on_surface_variant">#5F6B7A</color>   <!-- AWS Muted -->
 
     <color name="md_error">#BA1A1A</color>
     <color name="md_on_error">#FFFFFF</color>
+    <color name="md_error_container">#FFDAD6</color>
+    <color name="md_on_error_container">#410E0B</color>
 
-    <!-- ── Material 3 Dark palette ── -->
-    <color name="md_primary_dark">#ADC6FF</color>
-    <color name="md_on_primary_dark">#002E6D</color>
-    <color name="md_primary_container_dark">#00429A</color>
-    <color name="md_on_primary_container_dark">#D8E2FF</color>
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- Material 3 Dark Palette (AWS Navy + Orange accents)            -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <color name="md_primary_dark">#FF9900</color>         <!-- AWS Orange -->
+    <color name="md_on_primary_dark">#0F141D</color>      <!-- AWS Navy Strong -->
+    <color name="md_primary_container_dark">#EC7211</color> <!-- AWS Orange Strong -->
+    <color name="md_on_primary_container_dark">#FFFFFF</color>
 
-    <color name="md_secondary_dark">#80D4E4</color>
-    <color name="md_on_secondary_dark">#003640</color>
-    <color name="md_secondary_container_dark">#004E5C</color>
-    <color name="md_on_secondary_container_dark">#B2EBF2</color>
+    <color name="md_secondary_dark">#0972D3</color>       <!-- AWS Blue -->
+    <color name="md_on_secondary_dark">#0F141D</color>
+    <color name="md_secondary_container_dark">#004BA3</color>
+    <color name="md_on_secondary_container_dark">#D6E8FF</color>
 
-    <color name="md_surface_dark">#111318</color>
-    <color name="md_on_surface_dark">#E2E2E9</color>
-    <color name="md_surface_variant_dark">#44474F</color>
-    <color name="md_on_surface_variant_dark">#C4C6D0</color>
+    <color name="md_tertiary_dark">#5F6B7A</color>        <!-- AWS Muted -->
+    <color name="md_on_tertiary_dark">#0F141D</color>
+    <color name="md_tertiary_container_dark">#3D4655</color>
+    <color name="md_on_tertiary_container_dark">#E8EEF8</color>
+
+    <color name="md_surface_dark">#161E2D</color>         <!-- AWS Navy -->
+    <color name="md_on_surface_dark">#E8EAEF</color>
+    <color name="md_surface_variant_dark">#25313E</color>
+    <color name="md_on_surface_variant_dark">#C8CFD9</color>
 
     <color name="md_error_dark">#FFB4AB</color>
     <color name="md_on_error_dark">#690005</color>
+    <color name="md_error_container_dark">#93000A</color>
+    <color name="md_on_error_container_dark">#FFDAD6</color>
 
-    <!-- ── Semantic colors used in code ── -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- Semantic colors used in code                                   -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
     <color name="color_signed_in">#2E7D32</color>
     <color name="color_signed_out_bg">#F5F5F5</color>
-    <color name="geofence_stroke">#1565C0</color>
-    <color name="geofence_fill">#221565C0</color>
+    <color name="geofence_stroke">#0972D3</color>         <!-- AWS Blue for consistency -->
+    <color name="geofence_fill">#220972D3</color>
 </resources>

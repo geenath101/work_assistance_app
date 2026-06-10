@@ -25,6 +25,7 @@ object AuthRepository {
     fun signOut() {
         currentUser = null
         accessToken = null
+        RetrofitClient.setAccessToken(null)  // Clear token from all requests
     }
 
     /**
@@ -38,11 +39,9 @@ object AuthRepository {
         }
 
         return try {
-            // Company is currently required by the API payload. Keep it constant for now.
             val request = LoginRequest(
-                userName = username.trim(),
-                password = password,
-                company = "WorkAssist Co."
+                username = username.trim(),
+                password = password
             )
             val response = RetrofitClient.apiService.login(request)
             if (!response.isSuccessful || response.body() == null) {
@@ -51,6 +50,8 @@ object AuthRepository {
 
             val body = response.body()!!
             accessToken = body.accessToken
+            // Set token in RetrofitClient so it's automatically added to all future requests
+            RetrofitClient.setAccessToken(body.accessToken)
 
             val remoteUser = body.user
                 ?: return Resource.Error("Login failed: missing user payload")

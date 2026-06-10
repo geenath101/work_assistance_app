@@ -2,9 +2,12 @@ package com.example.workassistance.data.remote.api
 
 import com.example.workassistance.data.remote.model.AttendanceRequest
 import com.example.workassistance.data.remote.model.AttendanceResponse
+import com.example.workassistance.data.remote.model.CompleteTaskRequest
+import com.example.workassistance.data.remote.model.CompleteTaskResponse
 import com.example.workassistance.data.remote.model.LoginRequest
 import com.example.workassistance.data.remote.model.LoginResponse
 import com.example.workassistance.data.remote.model.SiteAssignment
+import com.example.workassistance.data.remote.model.SiteTaskDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -31,4 +34,18 @@ interface ApiService {
 
     @POST("auth/login")
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
+
+    /**
+     * Fetch tasks assigned to a site.
+     * GET /sites/{siteId}/tasks
+     */
+    @GET("sites/{siteId}/tasks")
+    suspend fun getTasksBySite(@Path("siteId") siteId: String): Response<List<SiteTaskDto>>
+
+    /**
+     * Mark a task complete with proof-of-work photos.
+     * POST /tasks/complete
+     */
+    @POST("tasks/complete")
+    suspend fun completeTask(@Body request: CompleteTaskRequest): Response<CompleteTaskResponse>
 }

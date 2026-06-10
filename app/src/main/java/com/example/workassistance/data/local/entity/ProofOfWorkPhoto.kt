@@ -7,6 +7,8 @@ import androidx.room.PrimaryKey
 data class ProofOfWorkPhoto(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val siteId: String,
+    /** Optional link to a specific site task (remote id). */
+    val taskId: String? = null,
     /** Stored as a string so we can keep it across process restarts. */
     val uri: String,
     val note: String? = null,

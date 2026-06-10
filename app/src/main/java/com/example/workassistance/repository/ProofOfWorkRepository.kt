@@ -10,11 +10,15 @@ class ProofOfWorkRepository(
 ) {
     fun observePhotos(siteId: String): LiveData<List<ProofOfWorkPhoto>> = dao.observeBySite(siteId)
 
-    suspend fun addPhoto(siteId: String, uri: String, note: String?): Resource<Unit> {
+    fun observePhotos(siteId: String, taskId: String): LiveData<List<ProofOfWorkPhoto>> =
+        dao.observeBySiteTask(siteId, taskId)
+
+    suspend fun addPhoto(siteId: String, taskId: String?, uri: String, note: String?): Resource<Unit> {
         return try {
             dao.insert(
                 ProofOfWorkPhoto(
                     siteId = siteId,
+                    taskId = taskId,
                     uri = uri,
                     note = note
                 )

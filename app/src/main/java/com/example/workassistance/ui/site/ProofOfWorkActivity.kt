@@ -31,6 +31,12 @@ import com.example.workassistance.ui.theme.WorkAssistanceTheme
 import com.example.workassistance.util.Resource
 
 class ProofOfWorkActivity : ComponentActivity() {
+
+    companion object {
+        const val EXTRA_TASK_ID = "extra_task_id"
+        const val EXTRA_TASK_TITLE = "extra_task_title"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -48,9 +54,17 @@ class ProofOfWorkActivity : ComponentActivity() {
             signInExpiryMinutes = intent.getIntExtra(SiteDetailActivity.EXTRA_SIGN_IN_EXPIRY_MINUTES, 12 * 60)
         )
 
+        val taskId = intent.getStringExtra(EXTRA_TASK_ID)
+        val taskTitle = intent.getStringExtra(EXTRA_TASK_TITLE)
+
         setContent {
             WorkAssistanceTheme {
-                ProofOfWorkScreen(site = site, onBack = { finish() })
+                ProofOfWorkScreen(
+                    site = site,
+                    taskId = taskId,
+                    taskTitle = taskTitle,
+                    onBack = { finish() }
+                )
             }
         }
     }
@@ -60,14 +74,16 @@ class ProofOfWorkActivity : ComponentActivity() {
 @Composable
 private fun ProofOfWorkScreen(
     site: SiteAssignment,
+    taskId: String?,
+    taskTitle: String?,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
     val repo = remember { ProofOfWorkRepository(AppDatabase.getInstance(context).proofOfWorkDao()) }
     val vm: ProofOfWorkViewModel = viewModel(factory = ProofOfWorkViewModelFactory(repo))
 
-    LaunchedEffect(site.siteId) {
-        vm.setSite(site.siteId)
+    LaunchedEffect(site.siteId, taskId) {
+        vm.setScope(site.siteId, taskId)
     }
 
     val photos by vm.photos.observeAsState(emptyList())
@@ -104,7 +120,7 @@ private fun ProofOfWorkScreen(
         topBar = {
             Column {
                 TopAppBar(
-                    title = { Text("Proof of Work") },
+                    title = { Text(if (taskTitle.isNullOrBlank()) "Proof of Work" else "Proof: $taskTitle") },
                     navigationIcon = {
                         IconButton(onClick = onBack) {
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -124,7 +140,11 @@ private fun ProofOfWorkScreen(
         ) {
             Text(text = site.siteName, style = MaterialTheme.typography.titleMedium)
             Text(
-                text = "Store work photos locally per site. Remote upload will be added later.",
+                text = if (taskId.isNullOrBlank()) {
+                    "Store work photos locally for this site."
+                } else {
+                    "Attach at least 1 photo to complete this task."
+                },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

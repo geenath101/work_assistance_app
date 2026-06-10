@@ -15,24 +15,30 @@ class ProofOfWorkViewModel(
     private val repo: ProofOfWorkRepository
 ) : ViewModel() {
 
-    private val siteId = MutableLiveData<String>()
+    private val scopeKey = MutableLiveData<ScopeKey>()
 
-    val photos: LiveData<List<ProofOfWorkPhoto>> = siteId.switchMap { id ->
-        repo.observePhotos(id)
+    private data class ScopeKey(
+        val siteId: String,
+        val taskId: String?
+    )
+
+    val photos: LiveData<List<ProofOfWorkPhoto>> = scopeKey.switchMap { key ->
+        if (key.taskId == null) repo.observePhotos(key.siteId)
+        else repo.observePhotos(key.siteId, key.taskId)
     }
 
     private val _saveResult = MutableLiveData<Resource<Unit>?>()
     val saveResult: LiveData<Resource<Unit>?> = _saveResult
 
-    fun setSite(siteId: String) {
-        this.siteId.value = siteId
+    fun setScope(siteId: String, taskId: String?) {
+        scopeKey.value = ScopeKey(siteId = siteId, taskId = taskId)
     }
 
     fun addPhoto(uri: String, note: String?) {
-        val id = siteId.value ?: return
+        val key = scopeKey.value ?: return
         _saveResult.value = Resource.Loading
         viewModelScope.launch {
-            _saveResult.value = repo.addPhoto(id, uri, note)
+            _saveResult.value = repo.addPhoto(key.siteId, key.taskId, uri, note)
         }
     }
 
